@@ -1,0 +1,51 @@
+## Permissions
+
+### Declaration
+
+@typexs/roles-api
+
+in implemented in IActivator or IBootstrap
+
+```js
+export class Activator implements IActivator, IPermissions {
+
+    permissions(): Promise<IPermissionDef[]> | IPermissionDef[] {
+        return [
+            {
+                permission: 'access some permission'
+            },
+            {
+                permission: 'some other permission',
+                handle: (user:any, obj:any) => {
+                    if(_.has(obj, 'user') && obj->user === user) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        ];
+    }
+
+}
+```
+
+### Check permissions
+
+```
+
+const credentials = Container.get(Credentials)
+
+const entity = new Room();
+const user = GetCurrentUser();
+
+if(credentials.access('access user entity', user, entity)){
+    // access allowed
+}else{
+    // access forbidden
+}
+
+
+```
+
+
+

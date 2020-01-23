@@ -1,0 +1,11 @@
+app:
+  name: typexs-roles
+
+
+
+logging:
+  enable: true
+  level: debug
+  transports:
+  - console: {}
+
