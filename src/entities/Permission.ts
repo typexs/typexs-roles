@@ -2,7 +2,7 @@ import {Asc, Entity, From, Join, Property, To} from '@typexs/schema/browser';
 import {And, Eq, Key, Value} from 'commons-expressions/browser';
 import {RBelongsTo} from './RBelongsTo';
 import {Role} from './Role';
-import {IPermissionDef} from '@typexs/roles-api';
+import {IPermissionDef, IRolesHolder, ISecuredResource} from '@typexs/roles-api';
 
 
 @Entity()
@@ -48,7 +48,28 @@ export class Permission implements IPermissionDef {
   @Property({type: 'date:updated'})
   updated_at: Date;
 
-  handle?: (cred: any, obj: any) => boolean;
+  handle?: (cred: IRolesHolder, obj: ISecuredResource) => boolean | Promise<boolean>;
+
+
+  getType(): 'single' | 'pattern' {
+    return this.type;
+  }
+
+  getPermission(): string {
+    return this.permission;
+  }
+
+  getDescription(): string {
+    return this.description;
+  }
+
+  getHandle(): (holder: IRolesHolder, resource?: any) => (boolean | Promise<boolean>) {
+    return this.handle;
+  }
+
+  getModule(): string {
+    return this.module;
+  }
 
   hasOwnHandle() {
     return !!this.handle;

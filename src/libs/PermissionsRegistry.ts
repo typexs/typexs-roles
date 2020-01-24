@@ -57,7 +57,7 @@ export class PermissionsRegistry {
             // deprecated only permission name
             permissionName = p;
           } else {
-            permissionName = p.permission;
+            permissionName = p.getPermission();
           }
 
           const exists = this.permissions.find(x => x.permission === permissionName);
@@ -75,7 +75,7 @@ export class PermissionsRegistry {
             _.assign(permission, p);
           }
 
-          permission.module = _module;
+          permission.module = _module || 'default';
           permission.type = /\*/.test(permission.permission) ? 'pattern' : 'single';
           permission.disabled = false;
         }
