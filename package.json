@@ -15,6 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "@allgemein/packaging": "^1.1.0",
+    "@types/chai": "^4.2.7",
     "@types/gulp": "^4.0.6",
     "@types/gulp-replace": "0.0.31",
     "@types/gulp-sourcemaps": "0.0.32",
@@ -43,7 +44,7 @@
     "lodash": "^4.17.15",
     "@cezaryrk/minimatch": "^3.0.4",
     "@typexs/base": "0.x",
-    "@typexs/roles-api": "^1.0.0",
+    "@typexs/roles-api": "^1.0.5",
     "@typexs/schema": "0.x"
   },
   "private": true,
