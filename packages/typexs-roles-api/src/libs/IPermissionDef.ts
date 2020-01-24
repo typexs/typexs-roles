@@ -23,7 +23,8 @@ export interface IPermissionDef {
   /**
    * own check
    */
-  getHandle?(): (holder: IRolesHolder, resource?: any) => boolean | Promise<boolean>;
+  getHandle?(): (holder: IRolesHolder, ...args: any[]) => boolean | Promise<boolean>;
+
 
   /**
    * own check
