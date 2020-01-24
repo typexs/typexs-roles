@@ -1,0 +1,150 @@
+import {expect} from 'chai';
+import {Bootstrap, Container, Injector, ITypexsOptions} from '@typexs/base';
+import {suite, test} from 'mocha-typescript';
+import {TestHelper} from './TestHelper';
+import {TEST_STORAGE_OPTIONS} from './config';
+import {Access} from '../../src/libs/Access';
+import {PermissionsRegistry} from '../../src';
+import {BasicPermission} from '../../packages/typexs-roles-api/src';
+import {IPermissionDef, IPermissions, IRole, IRolesHolder} from '@typexs/roles-api';
+
+let bootstrap: Bootstrap;
+
+
+@suite(TestHelper.suiteName(__filename))
+class AccessSpec {
+
+
+  static async before() {
+    bootstrap = Bootstrap
+      .setConfigSources([{type: 'system'}])
+      .configure(<ITypexsOptions & any>{
+        // app: {name: 'test', nodeId: 'worker'},
+        logging: {enable: true, level: 'debug'},
+        // modules: {paths: [__dirname + '/../../..']},
+        storage: {default: TEST_STORAGE_OPTIONS},
+        // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
+      });
+    bootstrap.activateLogger();
+    bootstrap.activateErrorHandling();
+    await bootstrap.prepareRuntime();
+    bootstrap = await bootstrap.activateStorage();
+    bootstrap = await bootstrap.startup();
+  }
+
+
+  static async after() {
+    if (bootstrap) {
+      await bootstrap.shutdown();
+    }
+  }
+
+  @test
+  async 'access validation for single'() {
+    const registry: PermissionsRegistry = Injector.get(PermissionsRegistry.NAME);
+
+    const c: IPermissions = {
+      permissions() {
+        return [
+          new BasicPermission('have a nice day'),
+          new BasicPermission('have a nice next day')
+        ];
+      }
+    };
+
+    await registry.loadFrom([c]);
+    const access: Access = Injector.create(Access);
+    const user: IRolesHolder = {
+      getIdentifier(): string {
+        return 'user-1';
+      },
+      getRoles(): IRole[] {
+        return [{
+          getRole(): string {
+            return 'hallo';
+          },
+
+          getPermissions(): IPermissionDef[] {
+            return [
+              {
+                getPermission(): string {
+                  return 'have a good day';
+                }
+              },
+              {
+                getPermission(): string {
+                  return 'have a nice day';
+                }
+              }
+            ];
+          }
+        }];
+      }
+    };
+
+    const user_2: IRolesHolder = {
+      getIdentifier(): string {
+        return 'user-2';
+      },
+      getRoles(): IRole[] {
+        return [{
+          getRole(): string {
+            return 'hallo2';
+          },
+
+          getPermissions(): IPermissionDef[] {
+            return [
+              {
+                getPermission(): string {
+                  return 'have a nice next day';
+                }
+              },
+              {
+                getPermission(): string {
+                  return 'have a nice day';
+                }
+              }
+            ];
+          }
+        }];
+      }
+    };
+
+// cause is not registed
+    let allowed = await access.validate(user, 'have a day');
+    expect(allowed).to.be.false;
+
+    allowed = await access.validate(user, 'have a nice day');
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, 'have a nice next day');
+    expect(allowed).to.be.false;
+
+    allowed = await access.validate(user, ['have a nice day', 'have a nice next day']);
+    expect(allowed).to.be.false;
+
+    allowed = await access.validate(user_2, ['have a nice day', 'have a nice next day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day']);
+    expect(allowed).to.be.false;
+
+    allowed = await access.validate(user, ['have a nice day']);
+    expect(allowed).to.be.true;
+  }
+
+  @test.skip
+  async 'access with predefined handle'() {
+
+  }
+
+  @test.skip
+  async 'access of secured resource'() {
+
+  }
+
+  @test.skip
+  async 'hide/show object fields'() {
+
+  }
+}
