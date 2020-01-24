@@ -1,29 +1,34 @@
+import {IRolesHolder} from './IRolesHolder';
+
+/**
+ * permission specification
+ */
 export interface IPermissionDef {
 
   /**
    * Name
    */
-  permission: string;
+  getPermission(): string;
 
   /**
    * Description
    */
-  description?: string;
+  getDescription?(): string;
 
   /**
    * Description
    */
-  module?: string;
+  getModule?(): string;
 
   /**
    * own check
    */
-  handle?: any;
+  getHandle?(): (holder: IRolesHolder, resource?: any) => boolean | Promise<boolean>;
 
   /**
    * own check
    */
-  type?: 'single' | 'pattern';
+  getType?(): 'single' | 'pattern';
 
 
 }

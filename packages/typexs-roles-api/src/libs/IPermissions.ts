@@ -11,7 +11,7 @@ import {IPermissionDef} from './IPermissionDef';
 export interface IPermissions {
 
   /**
-   *
+   * method returing declared modul permissions
    */
   permissions(): Promise<IPermissionDef[]> | IPermissionDef[];
 
