@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
 import {IPermissions} from '@typexs/roles-api';
-import {C_STORAGE_DEFAULT, ClassesLoader, Inject, StorageRef} from '@typexs/base';
 import {Permission} from '../entities/Permission';
+
+
+const MODULE_NAME = '__MODULNAME__';
 
 
 /**
@@ -11,25 +13,15 @@ export class PermissionsRegistry {
 
   static NAME: string = PermissionsRegistry.name;
 
-  @Inject(C_STORAGE_DEFAULT)
-  private storageRef: StorageRef;
-
   // TODO dynamic permissions loader
-  permissions: Permission[];
+  permissions: Permission[] = [];
 
 
-  /**
-   * Initial load of permissions
-   *
-   * Mark all permissions (which are not defined manuel, can be identified by module === 'default')
-   * with disabled = true, to identify active once.
-   */
-  async prepare() {
-    this.permissions = await this.storageRef.getController().find(Permission, {}, {limit: 0});
-    for (const permission of this.permissions) {
-      if (permission.module !== 'default') {
-        permission.disabled = true;
-      }
+  static getModulName(cls: Function) {
+    if (Reflect && Reflect['getOwnMetadata']) {
+      return Reflect['getOwnMetadata'](MODULE_NAME, cls);
+    } else {
+      return cls[MODULE_NAME] ? cls[MODULE_NAME] : null;
     }
   }
 
@@ -47,7 +39,7 @@ export class PermissionsRegistry {
       if (ipermissions.permissions) {
         // if methods
 
-        const _module = ClassesLoader.getModulName((<any>ipermissions).__proto__.constructor);
+        const _module = PermissionsRegistry.getModulName((<any>ipermissions).__proto__.constructor);
         const modul_permissions = await ipermissions.permissions();
 
         for (const p of modul_permissions) {
@@ -82,12 +74,13 @@ export class PermissionsRegistry {
       }
     }
 
-    if (permissions.length > 0) {
-      await this.storageRef.getController().save(permissions);
-    }
     return permissions;
   }
 
+  async add(p: Permission) {
+    this.permissions.push(p);
+    return p;
+  }
 
   find(permission: string): Permission;
   find(permission: string[]): Permission[];
@@ -97,5 +90,6 @@ export class PermissionsRegistry {
     }
     return this.permissions.filter(x => permission.includes(x.permission));
   }
+
 
 }

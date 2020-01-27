@@ -1,5 +1,4 @@
-import {CObject} from "@typexs/schema/libs/decorators/CObject";
-import {Property} from "@typexs/schema/libs/decorators/Property";
+import {CObject, Property} from '@typexs/schema/browser';
 
 
 @CObject({name: 'r_belongsto'})

@@ -1,24 +1,30 @@
-import {Bootstrap, ClassesLoader, IBootstrap, Inject} from '@typexs/base';
+import {Bootstrap, C_STORAGE_DEFAULT, ClassesLoader, IBootstrap, Inject, StorageRef} from '@typexs/base';
 import {PermissionsRegistry} from './libs/PermissionsRegistry';
+import {PermissionsRegistryLoader} from './libs/PermissionsRegistryLoader';
 
 export class Startup implements IBootstrap {
 
 
+  @Inject(PermissionsRegistryLoader.NAME)
+  private loader: PermissionsRegistryLoader;
+
   @Inject(PermissionsRegistry.NAME)
   private registry: PermissionsRegistry;
 
-  // @Inject(RuntimeLoader.NAME)
-  // loader: RuntimeLoader;
+  @Inject(C_STORAGE_DEFAULT)
+  private storageRef: StorageRef;
 
 
   async bootstrap() {
-    await this.registry.prepare();
+    await this.loader.loadInitialBackend();
 
     const modulActivators = Bootstrap._().getActivators() as any[];
-    await this.registry.loadFrom(modulActivators);
+    let permissions = await this.registry.loadFrom(modulActivators);
+    await this.loader.save(permissions);
 
     const modulStartups = Bootstrap._().getModulBootstraps() as any[];
-    await this.registry.loadFrom(modulStartups);
+    permissions = await this.registry.loadFrom(modulStartups);
+    await this.loader.save(permissions);
 
   }
 
