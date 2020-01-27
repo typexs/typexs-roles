@@ -17,7 +17,7 @@ export class Activator implements IActivator, IPermissions {
             {
                 permission: 'some other permission',
                 handle: (user:any, obj:any) => {
-                    if(_.has(obj, 'user') && obj->user === user) {
+                    if(_.has(obj, 'user') && obj.user === user) {
                         return true;
                     }
                     return false;
@@ -31,7 +31,7 @@ export class Activator implements IActivator, IPermissions {
 
 ### Check permissions
 
-```
+```js
 
 const credentials = Container.get(Credentials)
 
@@ -46,6 +46,78 @@ if(credentials.access('access user entity', user, entity)){
 
 
 ```
+
+```js
+
+const fieldAccessPermission = {
+    getPermission() {
+        return 'field restricted access';
+    }
+}
+
+const showPermission = {
+    getPermission() {
+        return 'show restricted value';
+    }
+// TODO subpermissions?
+    getHandle(){
+        return (holder: IRolesHolder, resource: ISecuredResource) => {
+            const permissions = Access.getPermissionFromRoles(holder.getRoles())
+            if(!permissions.includes('field restricted access')){
+                resource['restriced'] = '###HIDDEN###';
+            }
+            return true;
+        };
+    }
+};
+
+
+
+const obj = {
+    name: 'jan',
+    restricted: 'secretcode',
+
+    getPermissions(){
+        return [
+            new BasicPermission('show restricted value')
+        ];
+    }
+};
+
+const userWithFieldAcces = {
+    getRoles(){
+        return [
+            {
+                getPermissions(){
+                    return [
+                        new BasicPermission('show restricted value'),
+                        new BasicPermission('field restricted access')
+                    ];
+                }
+            }
+
+        ];
+    }
+};
+
+const userWithoutFieldAcces = {
+    getRoles(){
+        return [
+            {
+                getPermissions(){
+                    return [
+                        new BasicPermission('show restricted value'),
+                    ];
+                }
+            }
+
+        ];
+    }
+};
+
+
+```
+
 
 
 
