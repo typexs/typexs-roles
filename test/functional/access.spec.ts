@@ -9,7 +9,7 @@ import {BasicPermission} from '../../packages/typexs-roles-api/src';
 import {IPermissionDef, IPermissions, IRole, IRolesHolder} from '@typexs/roles-api';
 
 let bootstrap: Bootstrap;
-
+let inc = 0;
 
 @suite(TestHelper.suiteName(__filename))
 class AccessSpec {
@@ -30,6 +30,22 @@ class AccessSpec {
     await bootstrap.prepareRuntime();
     bootstrap = await bootstrap.activateStorage();
     bootstrap = await bootstrap.startup();
+
+    const registry: PermissionsRegistry = Injector.get(PermissionsRegistry.NAME);
+
+    const c: IPermissions = {
+      permissions() {
+        return [
+          new BasicPermission('*'),
+          new BasicPermission('have a * day'),
+          new BasicPermission('have a nice day'),
+          new BasicPermission('have a nice next day'),
+          new BasicPermission('nice next day access')
+        ];
+      }
+    };
+
+    await registry.loadFrom([c]);
   }
 
 
@@ -39,24 +55,13 @@ class AccessSpec {
     }
   }
 
+
   @test
   async 'access validation for single'() {
-    const registry: PermissionsRegistry = Injector.get(PermissionsRegistry.NAME);
-
-    const c: IPermissions = {
-      permissions() {
-        return [
-          new BasicPermission('have a nice day'),
-          new BasicPermission('have a nice next day')
-        ];
-      }
-    };
-
-    await registry.loadFrom([c]);
     const access: Access = Injector.create(Access);
     const user: IRolesHolder = {
       getIdentifier(): string {
-        return 'user-1';
+        return 'user-' + inc++;
       },
       getRoles(): IRole[] {
         return [{
@@ -84,7 +89,7 @@ class AccessSpec {
 
     const user_2: IRolesHolder = {
       getIdentifier(): string {
-        return 'user-2';
+        return 'user-' + inc++;
       },
       getRoles(): IRole[] {
         return [{
@@ -132,6 +137,91 @@ class AccessSpec {
     allowed = await access.validate(user, ['have a nice day']);
     expect(allowed).to.be.true;
   }
+
+
+  @test
+  async 'access by pattern'() {
+    const user: IRolesHolder = {
+      getIdentifier(): string {
+        return 'user-' + inc++;
+      },
+      getRoles(): IRole[] {
+        return [{
+          getRole(): string {
+            return 'secure';
+          },
+
+          getPermissions(): IPermissionDef[] {
+            return [
+              {
+                getPermission(): string {
+                  return '*';
+                }
+              }
+            ];
+          }
+        }];
+      }
+    };
+    const access: Access = Injector.create(Access);
+    let allowed = await access.validate(user, ['have a nice day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['nice next day access']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day', 'have a nice day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day', 'have a nice day', 'nice next day access']);
+    expect(allowed).to.be.true;
+  }
+
+  @test
+  async 'access by pattern part'() {
+    const user: IRolesHolder = {
+      getIdentifier(): string {
+        return 'user-' + inc++;
+      },
+      getRoles(): IRole[] {
+        return [{
+          getRole(): string {
+            return 'secure';
+          },
+
+          getPermissions(): IPermissionDef[] {
+            return [
+              {
+                getPermission(): string {
+                  return 'have a * day';
+                }
+              }
+            ];
+          }
+        }];
+      }
+    };
+    const access: Access = Injector.create(Access);
+    let allowed = await access.validate(user, ['have a nice day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['nice next day access']);
+    expect(allowed).to.be.false;
+
+    allowed = await access.validate(user, ['have a nice next day', 'have a nice day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day', 'have a nice day', 'nice next day access']);
+    expect(allowed).to.be.false;
+  }
+
+
 
   @test.skip
   async 'access with predefined handle'() {
