@@ -6,9 +6,17 @@ export class BasicPermission implements IPermissionDef {
 
   type: 'single' | 'pattern' = 'single';
 
-  constructor(permission: string, type: 'single' | 'pattern' = 'single') {
+  constructor(permission: string, type?: 'single' | 'pattern') {
     this.permission = permission;
-    this.type = type;
+    if (type) {
+      this.type = type;
+    } else {
+      if (/\*/.test(this.permission)) {
+        this.type = 'pattern';
+      } else {
+        this.type = 'single';
+      }
+    }
   }
 
   getPermission(): string {
