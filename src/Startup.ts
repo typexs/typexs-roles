@@ -26,6 +26,9 @@ export class Startup implements IBootstrap {
     permissions = await this.registry.loadFrom(modulStartups);
     await this.loader.save(permissions);
 
+    // load roles from configs if not exists, else check
+
+
   }
 
 

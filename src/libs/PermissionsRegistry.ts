@@ -7,7 +7,7 @@ const MODULE_NAME = '__MODULNAME__';
 
 
 /**
- * TODO
+ * Registry for permissions holding
  */
 export class PermissionsRegistry {
 
@@ -16,7 +16,11 @@ export class PermissionsRegistry {
   // TODO dynamic permissions loader
   permissions: Permission[] = [];
 
-
+  /**
+   * Method to get the modul name of the class
+   *
+   * @param cls
+   */
   static getModulName(cls: Function) {
     if (Reflect && Reflect['getOwnMetadata']) {
       return Reflect['getOwnMetadata'](MODULE_NAME, cls);
@@ -64,11 +68,16 @@ export class PermissionsRegistry {
             // deprecated only permission name
             permission.permission = permissionName;
           } else {
-            _.assign(permission, p);
+            permission.description = p.getDescription ? p.getDescription() : null;
+            permission.permission = permissionName;
+            permission.module = p.getModule ? p.getModule() : null;
+            permission.type = p.getType ? p.getType : <any>null;
+            permission.handle = permission.getHandle ? permission.getHandle() : null;
           }
 
-          permission.module = _module || 'default';
-          permission.type = /\*/.test(permission.permission) ? 'pattern' : 'single';
+
+          permission.module = permission.module || _module || 'default';
+          permission.type = permission.type || /\*/.test(permission.permission) ? 'pattern' : 'single';
           permission.disabled = false;
         }
       }
@@ -77,11 +86,21 @@ export class PermissionsRegistry {
     return permissions;
   }
 
-  async add(p: Permission) {
+  /**
+   * Add new permission
+   *
+   * @param p
+   */
+  add(p: Permission) {
     this.permissions.push(p);
     return p;
   }
 
+  /**
+   * Find permissions by name
+   *
+   * @param permission
+   */
   find(permission: string): Permission;
   find(permission: string[]): Permission[];
   find(permission: string | string[]): Permission | Permission[] {
