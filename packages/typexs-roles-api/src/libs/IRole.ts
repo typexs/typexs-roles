@@ -10,10 +10,14 @@ export interface IRole {
    */
   role: string;
 
+  /**
+   * return the litaral name of the role
+   */
+  displayName: string;
 
   /**
    * return the with this role associated permissions
    */
-  permissions?: IPermissionDef[];
+  permissions?: (string | IPermissionDef)[];
 
 }
