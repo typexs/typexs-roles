@@ -8,28 +8,28 @@ export interface IPermissionDef {
   /**
    * Name
    */
-  getPermission(): string;
+  permission: string;
 
   /**
    * Description
    */
-  getDescription?(): string;
+  description?: string;
 
   /**
    * Description
    */
-  getModule?(): string;
+  module?: string;
 
   /**
    * own check
    */
-  getHandle?(): (holder: IRolesHolder, ...args: any[]) => boolean | Promise<boolean>;
+  handle?: (holder: IRolesHolder, ...args: any[]) => boolean | Promise<boolean>;
 
 
   /**
    * own check
    */
-  getType?(): 'single' | 'pattern';
+  type?: 'single' | 'pattern';
 
 
 }

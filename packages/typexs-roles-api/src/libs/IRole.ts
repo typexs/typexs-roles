@@ -8,12 +8,12 @@ export interface IRole {
   /**
    * return the litaral name of the role
    */
-  getRole(): string;
+  role: string;
 
 
   /**
    * return the with this role associated permissions
    */
-  getPermissions(): IPermissionDef[];
+  permissions?: IPermissionDef[];
 
 }

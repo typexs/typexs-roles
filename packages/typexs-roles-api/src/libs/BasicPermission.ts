@@ -19,12 +19,5 @@ export class BasicPermission implements IPermissionDef {
     }
   }
 
-  getPermission(): string {
-    return this.permission;
-  }
-
-  getType(): 'single' | 'pattern' {
-    return this.type;
-  }
 
 }
