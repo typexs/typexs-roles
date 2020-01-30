@@ -6,7 +6,7 @@ import {TEST_STORAGE_OPTIONS} from './config';
 import {Access} from '../../src/libs/Access';
 import {PermissionsRegistry} from '../../src';
 import {BasicPermission} from '../../packages/typexs-roles-api/src';
-import {IPermissionDef, IPermissions, IRole, IRolesHolder} from '@typexs/roles-api';
+import {IPermissions, IRole, IRolesHolder} from '@typexs/roles-api';
 
 let bootstrap: Bootstrap;
 let inc = 0;
@@ -64,26 +64,20 @@ class AccessSpec {
         return 'user-' + inc++;
       },
       getRoles(): IRole[] {
-        return [{
-          getRole(): string {
-            return 'hallo';
-          },
-
-          getPermissions(): IPermissionDef[] {
-            return [
+        return [
+          {
+            role: 'hallo',
+            displayName: 'Hallo',
+            permissions: [
               {
-                getPermission(): string {
-                  return 'have a good day';
-                }
+                permission: 'have a good day'
               },
               {
-                getPermission(): string {
-                  return 'have a nice day';
-                }
+                permission: 'have a nice day'
               }
-            ];
+            ]
           }
-        }];
+        ];
       }
     };
 
@@ -92,30 +86,25 @@ class AccessSpec {
         return 'user-' + inc++;
       },
       getRoles(): IRole[] {
-        return [{
-          getRole(): string {
-            return 'hallo2';
-          },
-
-          getPermissions(): IPermissionDef[] {
-            return [
+        return [
+          {
+            role: 'hallo2',
+            displayName: 'Hallo2',
+            permissions: [
               {
-                getPermission(): string {
-                  return 'have a nice next day';
-                }
+                permission: 'have a nice next day'
               },
               {
-                getPermission(): string {
-                  return 'have a nice day';
-                }
+                permission: 'have a nice day'
               }
-            ];
+            ]
           }
-        }];
+        ];
       }
     };
 
-// cause is not registed
+
+    // cause is not registed
     let allowed = await access.validate(user, 'have a day');
     expect(allowed).to.be.false;
 
@@ -147,22 +136,13 @@ class AccessSpec {
       },
       getRoles(): IRole[] {
         return [{
-          getRole(): string {
-            return 'secure';
-          },
-
-          getPermissions(): IPermissionDef[] {
-            return [
-              {
-                getPermission(): string {
-                  return '*';
-                }
-              }
-            ];
-          }
+          role: 'secure',
+          displayName: 'Secure',
+          permissions: ['*']
         }];
       }
     };
+
     const access: Access = Injector.create(Access);
     let allowed = await access.validate(user, ['have a nice day']);
     expect(allowed).to.be.true;
@@ -188,19 +168,13 @@ class AccessSpec {
       },
       getRoles(): IRole[] {
         return [{
-          getRole(): string {
-            return 'secure';
-          },
-
-          getPermissions(): IPermissionDef[] {
-            return [
-              {
-                getPermission(): string {
-                  return 'have a * day';
-                }
-              }
-            ];
-          }
+          role: 'secure',
+          displayName: 'Secure',
+          permissions: [
+            {
+              permission: 'have a * day'
+            }
+          ]
         }];
       }
     };
@@ -220,7 +194,6 @@ class AccessSpec {
     allowed = await access.validate(user, ['have a nice next day', 'have a nice day', 'nice next day access']);
     expect(allowed).to.be.false;
   }
-
 
 
   @test.skip
