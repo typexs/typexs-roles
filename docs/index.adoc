@@ -1,8 +1,59 @@
-## Permissions
+## Roles and permissions
+
+### Subpackages
+
+* @typexs/roles-api - defines API
+
+### Configuration
+
+Enable/Disable by module inclusion or exclusion:
+
+```yml
+
+# Through
+modules:
+
+  # after @typexs/base >= 0.10.3
+  match:
+    - name: @typexs/roles
+      enabled: false | true
+
+  # before @typexs/base < 0.10.3
+  included:
+    '@typexs/roles':
+       enabled: false
+
+```
+
+Initialise permissions
+
+```yml
+
+initialise:
+  permissions:
+    # name only permission as string
+    - my own permissions
+    # or use the IPermission from @typexs/roles-api definition
+    - permission: my second own permission
+      description: This is a locally defined permission
+
+
+```
+
+or initialise roles
+
+```yml
+
+initialise:
+  roles:
+    # use IRole from @typexs/roles-api definition
+    - role: my roles
+      label: My Roles
+      description: This is a locally defined permission
+
+```
 
 ### Declaration
-
-@typexs/roles-api
 
 in implemented in IActivator or IBootstrap
 
@@ -118,6 +169,7 @@ const userWithoutFieldAcces = {
 
 ```
 
+### TODO
 
-
+* CLI command for role and permission creation (maybe create entity manage command first in @typexs/schema + @typexs/base)
 
