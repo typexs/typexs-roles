@@ -13,7 +13,12 @@ export interface IRole {
   /**
    * return the litaral name of the role
    */
-  displayName: string;
+  label?: string;
+
+  /**
+   * return the litaral name of the role
+   */
+  description?: string;
 
   /**
    * return the with this role associated permissions
