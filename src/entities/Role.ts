@@ -2,16 +2,41 @@ import {Asc, Entity, From, Join, Property, To} from '@typexs/schema/browser';
 import {And, Eq, Key, Value} from 'commons-expressions/browser';
 import {RBelongsTo} from './RBelongsTo';
 import {Permission} from './Permission';
+import {IRole} from '@typexs/roles-api';
 
 
 @Entity()
-export class Role {
+export class Role implements IRole {
 
   @Property({type: 'number', auto: true})
   id: number;
 
   @Property({type: 'string', typeorm: {unique: true}})
   rolename: string;
+
+
+  /**
+   * Impl. of IRole
+   */
+  get role() {
+    return this.rolename;
+  }
+
+  set role(x: string) {
+    this.rolename = x;
+  }
+
+  get label() {
+    if (this.displayName) {
+      return this.displayName;
+    }
+    return this.rolename;
+  }
+
+  set label(x: string) {
+    this.displayName = x;
+  }
+
 
   @Property({type: 'string', nullable: true})
   displayName: string;
@@ -44,12 +69,4 @@ export class Role {
   updated_at: Date;
 
 
-  // TODO has a list of permissions
-
-  label() {
-    if (this.displayName) {
-      return this.displayName;
-    }
-    return this.rolename;
-  }
 }

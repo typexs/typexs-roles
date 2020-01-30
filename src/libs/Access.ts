@@ -19,13 +19,13 @@ export class Access {
   cache: Cache;
 
   static getPermissionFromResource(obj: ISecuredResource) {
-    const permissionNames = _.concat([], ...obj.getPermissions().map(p => p.getPermission()));
+    const permissionNames = _.concat([], ...obj.getPermissions().map(p => p.permission));
     return permissionNames;
   }
 
 
   static getPermissionFromRoles(roles: IRole[]) {
-    const permissionNames = _.concat([], ...roles.map(x => _.concat([], ...x.getPermissions().map(p => p.getPermission()))));
+    const permissionNames = _.concat([], ...roles.map(x => _.concat([], ...x.permissions.map(p => _.isString(p) ? p : p.permission))));
     return permissionNames;
   }
 
@@ -33,12 +33,12 @@ export class Access {
     let allowed = false;
     for (const permission of permissions) {
       let matched = false;
-      switch (permission.getType() || 'single') {
+      switch (permission.type || 'single') {
         case 'pattern':
-          matched = !!MatchUtils.miniMatch(permission.getPermission(), permissionValue);
+          matched = !!MatchUtils.miniMatch(permission.permission, permissionValue);
           break;
         default:
-          matched = (permission.getPermission() === permissionValue);
+          matched = (permission.permission === permissionValue);
       }
       if (matched) {
         allowed = matched;
@@ -47,6 +47,7 @@ export class Access {
     }
     return allowed;
   }
+
 
   // validate(credential: IRolesHolder, permissionValue: string);
   async validate(credential: IRolesHolder, permissionValue: string | string[] | ISecuredResource) {
@@ -123,16 +124,16 @@ export class Access {
         const permissionValue = permissionValues[i];
 
         let _allowed = false;
-        switch (permission.getType() || 'single') {
+        switch (permission.type || 'single') {
           case 'pattern':
-            _allowed = !!MatchUtils.miniMatch(permission.getPermission(), permissionValue);
+            _allowed = !!MatchUtils.miniMatch(permission.permission, permissionValue);
             break;
           default:
-            _allowed = permissionValue === permission.getPermission();
+            _allowed = permissionValue === permission.permission;
         }
 
         if (_allowed) {
-          const handle = permission.getHandle();
+          const handle = permission.handle;
           if (handle) {
             arrAllowed[i] = await handle(holder, resource, this);
           } else {

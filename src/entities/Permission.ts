@@ -51,30 +51,6 @@ export class Permission implements IPermissionDef {
   handle?: (cred: IRolesHolder, obj: ISecuredResource) => boolean | Promise<boolean>;
 
 
-  getType(): 'single' | 'pattern' {
-    return this.type;
-  }
-
-  getPermission(): string {
-    return this.permission;
-  }
-
-  getDescription(): string {
-    return this.description;
-  }
-
-  getHandle(): (holder: IRolesHolder, resource?: any) => (boolean | Promise<boolean>) {
-    return this.handle;
-  }
-
-  getModule(): string {
-    return this.module;
-  }
-
-  hasOwnHandle() {
-    return !!this.handle;
-  }
-
   label() {
     return this.permission;
   }

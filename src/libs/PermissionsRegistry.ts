@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {IPermissions} from '@typexs/roles-api';
+import {IPermissionDef, IPermissions} from '@typexs/roles-api';
 import {Permission} from '../entities/Permission';
 
 
@@ -37,7 +37,7 @@ export class PermissionsRegistry {
    */
   async loadFrom(impls: IPermissions[]) {
     // collect permissions
-    const permissions = [];
+    let permissions: Permission[] = [];
     for (const activator of impls) {
       const ipermissions: IPermissions = (<IPermissions>(<any>activator));
       if (ipermissions.permissions) {
@@ -46,54 +46,67 @@ export class PermissionsRegistry {
         const _module = PermissionsRegistry.getModulName((<any>ipermissions).__proto__.constructor);
         const modul_permissions = await ipermissions.permissions();
 
-        for (const p of modul_permissions) {
-          let permissionName: string = null;
-          let permission = new Permission();
-          if (_.isString(p)) {
-            // deprecated only permission name
-            permissionName = p;
-          } else {
-            permissionName = p.getPermission();
-          }
-
-          const exists = this.permissions.find(x => x.permission === permissionName);
-          if (exists) {
-            permission = exists;
-          } else {
-            this.permissions.push(permission);
-            permissions.push(permission);
-          }
-
-          if (_.isString(p)) {
-            // deprecated only permission name
-            permission.permission = permissionName;
-          } else {
-            permission.description = p.getDescription ? p.getDescription() : null;
-            permission.permission = permissionName;
-            permission.module = p.getModule ? p.getModule() : null;
-            permission.type = p.getType ? p.getType : <any>null;
-            permission.handle = permission.getHandle ? permission.getHandle() : null;
-          }
-
-
-          permission.module = permission.module || _module || 'default';
-          permission.type = permission.type || /\*/.test(permission.permission) ? 'pattern' : 'single';
-          permission.disabled = false;
-        }
+        const loadedPermissions = await this.loadDefs(modul_permissions, _module);
+        permissions = _.concat(permissions, loadedPermissions);
       }
     }
-
     return permissions;
   }
 
+
   /**
-   * Add new permission
+   * Load permissions from classes implementing IPermissions
+   *
+   * @param impls
+   */
+  async loadDefs(permissions: IPermissionDef[], _module: string = 'default') {
+    // collect permissions
+    const retPermissions = [];
+
+    for (const p of permissions) {
+      let permissionName: string = null;
+      const permission = new Permission();
+      if (_.isString(p)) {
+        // deprecated only permission name
+        permissionName = p;
+      } else {
+        permissionName = p.permission;
+      }
+
+      if (_.isString(p)) {
+        // deprecated only permission name
+        permission.permission = permissionName;
+      } else {
+        permission.description = p.description ? p.description : null;
+        permission.permission = permissionName;
+        permission.module = p.module ? p.module : null;
+        permission.type = p.type ? p.type : <any>null;
+        permission.handle = permission.handle ? permission.handle : null;
+      }
+
+      permission.module = permission.module || _module || 'default';
+      permission.type = permission.type || /\*/.test(permission.permission) ? 'pattern' : 'single';
+      permission.disabled = false;
+
+      retPermissions.push(this.add(permission));
+    }
+
+    return retPermissions;
+  }
+
+
+  /**
+   * Add new permission or return the existing
    *
    * @param p
    */
   add(p: Permission) {
-    this.permissions.push(p);
-    return p;
+    const exists = this.permissions.find(x => x.permission === p.permission);
+    if (!exists) {
+      this.permissions.push(p);
+      return p;
+    }
+    return exists;
   }
 
   /**
