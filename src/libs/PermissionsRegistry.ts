@@ -45,7 +45,7 @@ export class PermissionsRegistry {
         // if methods
 
         const _module = PermissionsRegistry.getModulName((<any>ipermissions).__proto__.constructor);
-        const modul_permissions = await ipermissions.permissions();
+        const modul_permissions = (await ipermissions.permissions()).filter(x => !_.isEmpty(x));
 
         const loadedPermissions = await this.loadDefs(modul_permissions, _module);
         permissions = _.concat(permissions, loadedPermissions);
@@ -84,11 +84,13 @@ export class PermissionsRegistry {
         permission.permission = permissionName;
         permission.module = _module || 'default';
         permission.type = /\*/.test(permission.permission) ? 'pattern' : 'single';
+        permission.description = null;
+        permission.handle = null;
       } else {
-        permission.description = p.description ? p.description : null;
         permission.permission = permissionName;
-        permission.module = p.module ? p.module : null;
-        permission.type = p.type ? p.type : <any>null;
+        permission.module = p.module ? p.module : _module;
+        permission.type = p.type ? p.type : /\*/.test(permission.permission) ? 'pattern' : 'single';
+        permission.description = p.description ? p.description : null;
         permission.handle = p.handle ? p.handle : null;
       }
 
