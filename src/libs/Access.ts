@@ -85,21 +85,13 @@ export class Access {
     let allowed = false;
     const permissionDefs: IPermissionDef[] = this.getPermissions(permissionValues);
     if (!_.isEmpty(permissionDefs)) {
-
       const roles: IRole[] = await credential.getRoles();
-      const permissions = this.getPermissions(Access.getPermissionFromRoles(roles));
-      allowed = await this.checkPermissions(permissions, permissionValues, credential, resource);
-
-      // const handle = permissionDef.getHandle();
-      // if (handle) {
-      //   // has onw handle function
-      //   allowed = await handle(credential, permissionValue, resource, this);
-      // } else {
-      //   // get permissions from credentials
-      //   // and check if current permissions is given or maybe a pattern
-      //
-      //   allowed = this.checkPermission(permissions, permissionValues);
-      // }
+      if (!_.isEmpty(roles)) {
+        const permissions = this.getPermissions(Access.getPermissionFromRoles(roles));
+        if (!_.isEmpty(permissions)) {
+          allowed = await this.checkPermissions(permissions, permissionValues, credential, resource);
+        }
+      }
     }
 
     await this.cache.set(cacheKey, allowed, this.cacheBin, {ttl: 3600});
