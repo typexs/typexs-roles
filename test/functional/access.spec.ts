@@ -52,6 +52,7 @@ class AccessSpec {
   static async after() {
     if (bootstrap) {
       await bootstrap.shutdown();
+      Bootstrap.reset();
     }
   }
 

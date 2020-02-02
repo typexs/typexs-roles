@@ -3,7 +3,7 @@ import {BasicPermission, IPermissionDef, IPermissions, IRolesHolder} from '@type
 
 class Perm implements IPermissionDef {
 
-  permission?: string;
+  permission: string;
 
   type?: 'single' | 'pattern';
 
@@ -13,25 +13,9 @@ class Perm implements IPermissionDef {
 
   handle?: (holder: IRolesHolder, ...args: any[]) => (boolean | Promise<boolean>);
 
-  getPermission(): string {
-    return this.permission;
-  }
+  description?: string;
 
-  getType(): 'single' | 'pattern' {
-    return this.type;
-  }
 
-  getModule(): string {
-    return this.module;
-  }
-
-  getDescription(): string {
-    return this.desc;
-  }
-
-  getHandle(): (holder: IRolesHolder, ...args: any[]) => (boolean | Promise<boolean>) {
-    return this.handle;
-  }
 }
 
 
@@ -43,12 +27,8 @@ export class Activator implements IActivator, IPermissions {
     return [
       new BasicPermission('basic'),
       {
-        getPermission(): string {
-          return 'with description';
-        },
-        getDescription(): string {
-          return 'description is here';
-        }
+        permission: 'with description',
+        description: 'description is here'
       }
     ];
   }
