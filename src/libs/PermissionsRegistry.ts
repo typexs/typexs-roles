@@ -65,6 +65,7 @@ export class PermissionsRegistry {
     const retPermissions = [];
 
     for (const p of permissions) {
+
       let permissionName: string = null;
       const permission = new Permission();
       if (_.isString(p)) {
@@ -75,7 +76,13 @@ export class PermissionsRegistry {
       }
 
       if (!permissionName) {
-        Log.warn(`cant identify name ${permissionName} of ${p}.  Skipping entry ...`);
+        Log.warn(`Can't identify name ${permissionName} of ${p}.  Skipping entry ...`);
+        continue;
+      }
+
+      const dublett = retPermissions.find(x => x.permission === permissionName);
+      if (dublett) {
+        Log.warn(`Doublet's name ${permissionName} already set ${dublett}.`);
         continue;
       }
 

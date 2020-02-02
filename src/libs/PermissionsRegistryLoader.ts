@@ -38,7 +38,26 @@ export class PermissionsRegistryLoader {
 
   async savePermissions(p: Permission[]) {
     if (!_.isEmpty(p)) {
-      await this.entityController.storageRef.getController().save(p);
+      const names = p.map(x => x.permission);
+      const save: Permission[] = [];
+      const exists = await this.entityController
+        .storageRef.getController().find(Permission, {permission: {$in: names}}, {limit: 0}) as Permission[];
+      for (const perm of p) {
+        const already = !!save.find(x => x.permission === perm.permission);
+        if (already) {
+          continue;
+        }
+        const found = exists.find(x => x.permission === perm.permission);
+        if (found) {
+          perm.id = found.id;
+        }
+        save.push(perm);
+      }
+
+      if (!_.isEmpty(save)) {
+        await this.entityController.storageRef.getController().save(save);
+      }
+
     }
     return p;
   }
