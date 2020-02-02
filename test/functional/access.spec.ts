@@ -67,7 +67,7 @@ class AccessSpec {
         return [
           {
             role: 'hallo',
-            displayName: 'Hallo',
+            label: 'Hallo',
             permissions: [
               {
                 permission: 'have a good day'
@@ -89,7 +89,7 @@ class AccessSpec {
         return [
           {
             role: 'hallo2',
-            displayName: 'Hallo2',
+            label: 'Hallo2',
             permissions: [
               {
                 permission: 'have a nice next day'
@@ -137,7 +137,7 @@ class AccessSpec {
       getRoles(): IRole[] {
         return [{
           role: 'secure',
-          displayName: 'Secure',
+          label: 'Secure',
           permissions: ['*']
         }];
       }
@@ -169,7 +169,7 @@ class AccessSpec {
       getRoles(): IRole[] {
         return [{
           role: 'secure',
-          displayName: 'Secure',
+          label: 'Secure',
           permissions: [
             {
               permission: 'have a * day'
