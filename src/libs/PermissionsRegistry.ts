@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {IPermissionDef, IPermissions} from '@typexs/roles-api';
 import {Permission} from '../entities/Permission';
+import {Log} from '@typexs/base';
 
 
 const MODULE_NAME = '__MODULNAME__';
@@ -69,23 +70,28 @@ export class PermissionsRegistry {
       if (_.isString(p)) {
         // deprecated only permission name
         permissionName = p;
-      } else {
+      } else if (_.has(p, 'permission')) {
         permissionName = p.permission;
+      }
+
+      if (!permissionName) {
+        Log.warn(`cant identify name ${permissionName} of ${p}.  Skipping entry ...`);
+        continue;
       }
 
       if (_.isString(p)) {
         // deprecated only permission name
         permission.permission = permissionName;
+        permission.module = _module || 'default';
+        permission.type = /\*/.test(permission.permission) ? 'pattern' : 'single';
       } else {
         permission.description = p.description ? p.description : null;
         permission.permission = permissionName;
         permission.module = p.module ? p.module : null;
         permission.type = p.type ? p.type : <any>null;
-        permission.handle = permission.handle ? permission.handle : null;
+        permission.handle = p.handle ? p.handle : null;
       }
 
-      permission.module = permission.module || _module || 'default';
-      permission.type = permission.type || /\*/.test(permission.permission) ? 'pattern' : 'single';
       permission.disabled = false;
 
       retPermissions.push(this.add(permission));
