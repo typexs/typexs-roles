@@ -82,7 +82,7 @@ export class PermissionsRegistry {
 
       const dublett = retPermissions.find(x => x.permission === permissionName);
       if (dublett) {
-        Log.warn(`Doublet's name ${permissionName} already set ${dublett}.`);
+        Log.debug(`Doublet's name ${permissionName} already set ${JSON.stringify(dublett)}.`);
         continue;
       }
 
