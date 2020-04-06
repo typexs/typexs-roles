@@ -3,6 +3,7 @@
   "version": "1.0.5",
   "description": "",
   "main": "index.js",
+  "browser": "browser.js",
   "scripts": {
     "test": "nyc mocha --opts test/mocha.all.opts",
     "posttest": "codecov -f coverage/*.json"
