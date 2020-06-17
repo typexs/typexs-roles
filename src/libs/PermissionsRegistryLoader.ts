@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {Inject} from '@typexs/base';
+import {C_STORAGE_DEFAULT, Inject, Injector, StorageRef} from '@typexs/base';
 import {Permission} from '../entities/Permission';
 import {PermissionsRegistry} from './PermissionsRegistry';
 import {EntityController} from '@typexs/schema';
@@ -15,9 +15,10 @@ export class PermissionsRegistryLoader {
   private registry: PermissionsRegistry;
 
 
-  @Inject('EntityController.default')
-  private entityController: EntityController;
+  private _entityController: EntityController;
 
+
+  private _storageRef: StorageRef;
 
   /**
    * Initial load of permissions
@@ -26,7 +27,7 @@ export class PermissionsRegistryLoader {
    * with disabled = true, to identify active once.
    */
   async loadInitialBackend() {
-    const permissions = await this.entityController.storageRef.getController().find(Permission, {}, {limit: 0}) as Permission[];
+    const permissions = await this.getStorageRef().getController().find(Permission, {}, {limit: 0}) as Permission[];
     for (let permission of permissions) {
       permission = this.registry.add(permission);
       if (permission.module !== 'default') {
@@ -40,8 +41,7 @@ export class PermissionsRegistryLoader {
     if (!_.isEmpty(p)) {
       const names = p.map(x => x.permission);
       const save: Permission[] = [];
-      const exists = await this.entityController
-        .storageRef.getController().find(Permission, {permission: {$in: names}}, {limit: 0}) as Permission[];
+      const exists = await this.getStorageRef().getController().find(Permission, {permission: {$in: names}}, {limit: 0}) as Permission[];
       for (const perm of p) {
         const already = !!save.find(x => x.permission === perm.permission);
         if (already) {
@@ -55,7 +55,7 @@ export class PermissionsRegistryLoader {
       }
 
       if (!_.isEmpty(save)) {
-        await this.entityController.storageRef.getController().save(save);
+        await this.getStorageRef().getController().save(save);
       }
 
     }
@@ -64,13 +64,29 @@ export class PermissionsRegistryLoader {
 
 
   async findRole(name: string) {
-    return this.entityController.findOne(Role, {rolename: name}, {limit: 1});
+    return this.getEntityController().findOne(Role, {rolename: name}, {limit: 1});
   }
 
   async saveRoles(p: Role[]) {
     if (!_.isEmpty(p)) {
-      await this.entityController.save(p);
+      await this.getEntityController().save(p);
     }
     return p;
+  }
+
+  private getEntityController() {
+    if (!this._entityController) {
+      this._entityController = Injector.get('EntityController.default');
+    }
+    return this._entityController;
+
+  }
+
+  private getStorageRef() {
+    if (!this._storageRef) {
+      this._storageRef = Injector.get(C_STORAGE_DEFAULT);
+    }
+    return this._storageRef;
+
   }
 }
