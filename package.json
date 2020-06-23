@@ -21,6 +21,7 @@
     "@types/gulp-replace": "0.0.31",
     "@types/gulp-sourcemaps": "0.0.32",
     "@types/lodash": "^4.14.156",
+    "@typexs/server": "^1.0.0",
     "chai": "^4.2.0",
     "codecov": "^3.7.0",
     "codelyzer": "5.2.2",
