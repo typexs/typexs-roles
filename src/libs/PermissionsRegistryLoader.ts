@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import {C_STORAGE_DEFAULT, Inject, Injector, StorageRef} from '@typexs/base';
 import {Permission} from '../entities/Permission';
 import {PermissionsRegistry} from './PermissionsRegistry';
-import {EntityController} from '@typexs/schema';
 import {Role} from '../entities/Role';
+import {EntityController} from '@typexs/schema/libs/EntityController';
 
 export class PermissionsRegistryLoader {
 

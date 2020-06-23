@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import {Cache, CryptUtils, Inject} from '@typexs/base';
+import {CryptUtils} from 'commons-base';
+import {Cache, Inject} from '@typexs/base';
 import {PermissionsRegistry} from './PermissionsRegistry';
 
 import {IPermissionDef, IRole, IRolesHolder, ISecuredResource} from '@typexs/roles-api';
