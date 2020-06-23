@@ -4,8 +4,8 @@ import {Bootstrap, C_STORAGE_DEFAULT, Config, Container, ITypexsOptions, Storage
 import {suite, test} from 'mocha-typescript';
 import {TEST_STORAGE_OPTIONS} from './config';
 import {Permission} from '../../src';
-import {EntityController} from '@typexs/schema';
 import {Role} from '../../src/entities/Role';
+import {EntityController} from '@typexs/schema/libs/EntityController';
 
 let bootstrap: Bootstrap;
 
