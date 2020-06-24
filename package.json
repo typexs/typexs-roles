@@ -45,7 +45,7 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "@cezaryrk/minimatch": "^3.0.4",
-    "@typexs/base": "^1.2.15",
+    "@typexs/base": "^1.2.16",
     "@typexs/roles-api": "^1.0.10",
     "@typexs/schema": "^1.0.0"
   },
