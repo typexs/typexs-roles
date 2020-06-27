@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import {expect} from 'chai';
-import {Bootstrap, C_STORAGE_DEFAULT, Config, Container, ITypexsOptions, StorageRef} from '@typexs/base';
+import {Bootstrap, C_STORAGE_DEFAULT, Injector, ITypexsOptions, StorageRef} from '@typexs/base';
 import {suite, test} from 'mocha-typescript';
 import {TEST_STORAGE_OPTIONS} from './config';
 import {Permission} from '../../src';
@@ -35,7 +35,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/activator'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..']},
+        modules: {paths: [__dirname + '/../..'], disableCache: true},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -45,7 +45,7 @@ class StoringSpec {
     bootstrap = await bootstrap.activateStorage();
     bootstrap = await bootstrap.startup();
 
-    const storageRef = <StorageRef>Container.get(C_STORAGE_DEFAULT);
+    const storageRef = <StorageRef>Injector.get(C_STORAGE_DEFAULT);
     const permissions = await storageRef.getController().find(Permission, null, {limit: 0}) as Permission[];
 
 
@@ -69,7 +69,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/startup'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..']},
+        modules: {paths: [__dirname + '/../..'], disableCache: true},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -79,7 +79,7 @@ class StoringSpec {
     bootstrap = await bootstrap.activateStorage();
     bootstrap = await bootstrap.startup();
 
-    const storageRef = <StorageRef>Container.get(C_STORAGE_DEFAULT);
+    const storageRef = <StorageRef>Injector.get(C_STORAGE_DEFAULT);
     const permissions = await storageRef.getController().find(Permission, null, {limit: 0}) as Permission[];
 
     expect(permissions).to.have.length.gt(0);
@@ -101,7 +101,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/init_roles'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..']},
+        modules: {paths: [__dirname + '/../..'], disableCache: true},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -112,13 +112,13 @@ class StoringSpec {
     bootstrap = await bootstrap.startup();
 
 
-    const storageRef = <StorageRef>Container.get(C_STORAGE_DEFAULT);
+    const storageRef = <StorageRef>Injector.get(C_STORAGE_DEFAULT);
     const permissions = await storageRef.getController().find(Permission, null, {limit: 0}) as Permission[];
 
     const defaultPermissions = permissions.filter(x => x.module === 'default');
     expect(defaultPermissions).to.have.length(5);
 
-    const entityController = <EntityController>Container.get('EntityController.default');
+    const entityController = <EntityController>Injector.get('EntityController.default');
     const roles = await entityController.find(Role, null, {limit: 0, subLimit: 0}) as Role[];
 
     const role = _.first(roles);
@@ -141,7 +141,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/init_roles'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..']},
+        modules: {paths: [__dirname + '/../..'], disableCache: true},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -152,13 +152,13 @@ class StoringSpec {
     bootstrap = await bootstrap.startup();
 
 
-    const storageRef = <StorageRef>Container.get(C_STORAGE_DEFAULT);
+    const storageRef = <StorageRef>Injector.get(C_STORAGE_DEFAULT);
     const permissions = await storageRef.getController().find(Permission, null, {limit: 0}) as Permission[];
 
     const defaultPermissions = permissions.filter(x => x.module === 'default');
     expect(defaultPermissions).to.have.length(5);
 
-    const entityController = <EntityController>Container.get('EntityController.default');
+    const entityController = <EntityController>Injector.get('EntityController.default');
     let role = await entityController.findOne(Role, {rolename: 'demo_role'}, {limit: 0, subLimit: 0}) as Role;
 
 

@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import {Bootstrap, Container} from '@typexs/base';
 import {suite, test} from 'mocha-typescript';
 import {BasicPermission} from '../../packages/typexs-roles-api/src';
 

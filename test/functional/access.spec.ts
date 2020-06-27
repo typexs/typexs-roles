@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Bootstrap, Container, Injector, ITypexsOptions} from '@typexs/base';
+import {Bootstrap,  Injector, ITypexsOptions} from '@typexs/base';
 import {suite, test} from 'mocha-typescript';
 import {TestHelper} from './TestHelper';
 import {TEST_STORAGE_OPTIONS} from './config';
@@ -21,7 +21,7 @@ class AccessSpec {
       .configure(<ITypexsOptions & any>{
         // app: {name: 'test', nodeId: 'worker'},
         logging: {enable: true, level: 'debug'},
-        // modules: {paths: [__dirname + '/../../..']},
+        modules: {disableCache: true},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
