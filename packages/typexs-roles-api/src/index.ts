@@ -6,3 +6,4 @@ export * from './libs/ISecuredResource';
 
 
 export * from './libs/BasicPermission';
+export * from './libs/PermissionHelper';
