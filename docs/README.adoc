@@ -11,11 +11,12 @@ Can be found under packages in the git repo.
 
 The package can be build and published with the command:
 
-``` 
+```
 gulp packages
+gulp packagesPublish
 ```
 
 
 ## Documentation
 
-* 
+*
