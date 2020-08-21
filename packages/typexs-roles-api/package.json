@@ -1,6 +1,6 @@
 {
   "name": "@typexs/roles-api",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,9 @@
   "devDependencies": {
   },
   "dependencies": {
+  },
+  "peerDependencies": {
+    "@cezaryrk/minimatch": "^3.0.0"
   },
   "private": true,
   "nyc": {
