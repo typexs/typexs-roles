@@ -1,7 +1,6 @@
 import {expect} from 'chai';
-import {Bootstrap,  Injector, ITypexsOptions} from '@typexs/base';
+import {Bootstrap, Injector, ITypexsOptions} from '@typexs/base';
 import {suite, test} from 'mocha-typescript';
-import {TestHelper} from './TestHelper';
 import {TEST_STORAGE_OPTIONS} from './config';
 import {Access} from '../../src/libs/Access';
 import {PermissionsRegistry} from '../../src';
@@ -11,7 +10,7 @@ import {IPermissions, IRole, IRolesHolder} from '@typexs/roles-api';
 let bootstrap: Bootstrap;
 let inc = 0;
 
-@suite(TestHelper.suiteName(__filename))
+@suite('functional/access')
 class AccessSpec {
 
 
