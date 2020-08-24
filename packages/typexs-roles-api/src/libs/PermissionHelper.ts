@@ -19,12 +19,68 @@ export class PermissionHelper {
     }
   }
 
+  static getPermissionFromResource(obj: ISecuredResource) {
+    const permissionNames = [].concat([], ...obj.getPermissions().map(p => p.permission));
+    return permissionNames;
+  }
+
+
+  static getPermissionNamesFromRoles(roles: IRole[]) {
+    const permissionNames = [].concat([],
+      ...roles.map(x => [].concat([], ...x.permissions.map(p => typeof p === 'string' ? p : p.permission))));
+    return permissionNames;
+  }
+
+  static getPermissionFromRoles(roles: IRole[]) {
+    const permissions = [].concat([],
+      ...roles.map(x => [].concat([], ...x.permissions)));
+    return permissions;
+  }
+
+  static checkPermission(permissions: string[] | IPermissionDef[], permissionValue: string) {
+    let allowed = false;
+    let usePermissions: IPermissionDef[] = [];
+    if (permissions && permissions.length > 0 && typeof permissions[0] === 'string') {
+      usePermissions = (permissions as string[]).map((x: string) => {
+        return <IPermissionDef>{type: /\*/.test(x) ? 'pattern' : 'single', permission: x};
+      });
+    } else {
+      usePermissions = permissions as IPermissionDef[];
+    }
+
+    for (const permission of usePermissions) {
+      let matched = false;
+      switch (permission.type || 'single') {
+        case 'pattern':
+          matched = !!this.miniMatch(permission.permission, permissionValue);
+          break;
+        default:
+          matched = (permission.permission === permissionValue);
+      }
+      if (matched) {
+        allowed = matched;
+        break;
+      }
+    }
+    return allowed;
+  }
+
+
   static async checkPermissions(
-    permissions: IPermissionDef[], permissionValues: string[], holder?: IRolesHolder, resource?: ISecuredResource
+    permissions: string[] | IPermissionDef[], permissionValues: string[], holder?: IRolesHolder, resource?: ISecuredResource
   ) {
+    let usePermissions: IPermissionDef[] = [];
+    if (permissions && permissions.length > 0 && typeof permissions[0] === 'string') {
+      usePermissions = (permissions as string[]).map((x: string) => {
+        return <IPermissionDef>{type: /\*/.test(x) ? 'pattern' : 'single', permission: x};
+      });
+    } else {
+      usePermissions = permissions as IPermissionDef[];
+    }
+
     const arrAllowed: boolean[] = permissionValues.map(x => false);
     let allowed = false;
-    for (const permission of permissions) {
+    for (const permission of usePermissions) {
       for (let i = 0; i < permissionValues.length; i++) {
         if (arrAllowed[i]) {
           continue;
@@ -59,37 +115,5 @@ export class PermissionHelper {
     }
     return allowed;
   }
-
-  static getPermissionFromResource(obj: ISecuredResource) {
-    const permissionNames = [].concat([], ...obj.getPermissions().map(p => p.permission));
-    return permissionNames;
-  }
-
-
-  static getPermissionFromRoles(roles: IRole[]) {
-    const permissionNames = [].concat([],
-      ...roles.map(x => [].concat([], ...x.permissions.map(p => typeof p === 'string' ? p : p.permission))));
-    return permissionNames;
-  }
-
-  static checkPermission(permissions: IPermissionDef[], permissionValue: string) {
-    let allowed = false;
-    for (const permission of permissions) {
-      let matched = false;
-      switch (permission.type || 'single') {
-        case 'pattern':
-          matched = !!this.miniMatch(permission.permission, permissionValue);
-          break;
-        default:
-          matched = (permission.permission === permissionValue);
-      }
-      if (matched) {
-        allowed = matched;
-        break;
-      }
-    }
-    return allowed;
-  }
-
 
 }

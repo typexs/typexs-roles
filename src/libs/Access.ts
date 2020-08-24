@@ -58,7 +58,7 @@ export class Access {
     if (!_.isEmpty(permissionDefs)) {
       const roles: IRole[] = await credential.getRoles();
       if (!_.isEmpty(roles)) {
-        const permissions = this.getPermissions(PermissionHelper.getPermissionFromRoles(roles));
+        const permissions = this.getPermissions(PermissionHelper.getPermissionNamesFromRoles(roles));
         if (!_.isEmpty(permissions)) {
           allowed = await PermissionHelper.checkPermissions(permissions, permissionValues, credential, resource);
         }
