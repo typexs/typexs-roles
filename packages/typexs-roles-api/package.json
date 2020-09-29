@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha --opts test/mocha.all.opts",
+    "test": "nyc mocha test/**/*.spec.ts test/**/**/*.spec.ts",
     "posttest": "codecov -f coverage/*.json"
   },
   "repository": {
