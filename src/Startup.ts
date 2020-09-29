@@ -1,10 +1,9 @@
 import * as _ from 'lodash';
-import {Bootstrap, ClassesLoader, Config, IBootstrap, Inject} from '@typexs/base';
+import {Bootstrap, Config, IBootstrap, Inject} from '@typexs/base';
 import {PermissionsRegistry} from './libs/PermissionsRegistry';
 import {PermissionsRegistryLoader} from './libs/PermissionsRegistryLoader';
 import {BasicPermission, IPermissionDef, IRole} from '@typexs/roles-api';
-import {Role} from './entities/Role';
-import {Permission} from './entities/Permission';
+import {RolesHelper} from './libs/RolesHelper';
 
 export class Startup implements IBootstrap {
 
@@ -49,50 +48,7 @@ export class Startup implements IBootstrap {
     }
 
     const cfgRoles = Config.get('initialise.roles', []) as IRole[];
-    const localRoles: Role[] = [];
-
-    // collect permissions
-    for (const cfgRole of cfgRoles) {
-
-
-      const rolePermissions = _.get(cfgRole, 'permissions', []);
-      let rolePermissionToSave: Permission[] = [];
-      if (!_.isEmpty(rolePermissions)) {
-        const rolePermissionSave: IPermissionDef[] = [];
-        for (const rolePermission of rolePermissions) {
-          if (_.isString(rolePermission)) {
-            rolePermissionSave.push(new BasicPermission(rolePermission));
-          } else {
-            rolePermissionSave.push(rolePermission);
-          }
-        }
-
-        if (!_.isEmpty(rolePermissionSave)) {
-          rolePermissionToSave = await this.registry.loadDefs(rolePermissionSave);
-          await this.loader.savePermissions(rolePermissionToSave);
-        }
-      }
-
-
-      let role = await this.loader.findRole(cfgRole.role) as Role;
-
-      if (!role) {
-        role = new Role();
-        role.role = cfgRole.role;
-      }
-
-      role.label = cfgRole.label ? cfgRole.label : null;
-      role.description = cfgRole.description ? cfgRole.description : null;
-      role.displayName = cfgRole.label ? cfgRole.label : null;
-      role.disabled = false;
-      role.permissions = rolePermissionToSave;
-      localRoles.push(role);
-
-    }
-
-    if (!_.isEmpty(localRoles)) {
-      await this.loader.saveRoles(localRoles);
-    }
+    await RolesHelper.initRoles(this.loader, cfgRoles);
 
 
   }

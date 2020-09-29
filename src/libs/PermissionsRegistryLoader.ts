@@ -67,12 +67,14 @@ export class PermissionsRegistryLoader {
     return this.getEntityController().findOne(Role, {rolename: name}, {limit: 1});
   }
 
+
   async saveRoles(p: Role[]) {
     if (!_.isEmpty(p)) {
       await this.getEntityController().save(p);
     }
     return p;
   }
+
 
   private getEntityController() {
     if (!this._entityController) {
@@ -88,5 +90,9 @@ export class PermissionsRegistryLoader {
     }
     return this._storageRef;
 
+  }
+
+  getRegistry() {
+    return this.registry;
   }
 }
