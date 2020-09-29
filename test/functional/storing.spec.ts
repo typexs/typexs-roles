@@ -1,11 +1,13 @@
 import * as _ from 'lodash';
 import {expect} from 'chai';
-import {Bootstrap, C_STORAGE_DEFAULT, Injector, ITypexsOptions, StorageRef} from '@typexs/base';
+import {Bootstrap, C_STORAGE_DEFAULT, Config, Injector, ITypexsOptions, StorageRef} from '@typexs/base';
 import {suite, test} from 'mocha-typescript';
 import {TEST_STORAGE_OPTIONS} from './config';
-import {Permission} from '../../src';
+import {Permission, RBelongsTo} from '../../src';
 import {Role} from '../../src/entities/Role';
 import {EntityController} from '@typexs/schema/libs/EntityController';
+import {PermissionsRegistryLoader} from '../../src/libs/PermissionsRegistryLoader';
+import {RolesHelper} from '../../src/libs/RolesHelper';
 
 let bootstrap: Bootstrap;
 
@@ -134,8 +136,42 @@ class StoringSpec {
     ]);
   }
 
+
   @test
-  async 'modifiy roles'() {
+  async 'create initial roles (which are already present)'() {
+    bootstrap = Bootstrap
+      // .setConfigSources()
+      .configure(<ITypexsOptions & any>{
+        app: {path: __dirname + '/demo_storing/init_roles'},
+        logging: {enable: true, level: 'debug'},
+        modules: {paths: [__dirname + '/../..'], disableCache: true},
+        storage: {default: TEST_STORAGE_OPTIONS},
+        // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
+      });
+    bootstrap.activateLogger();
+    bootstrap.activateErrorHandling();
+    await bootstrap.prepareRuntime();
+    bootstrap = await bootstrap.activateStorage();
+    bootstrap = await bootstrap.startup();
+
+    const permissionsLoader = <PermissionsRegistryLoader>Injector.get(PermissionsRegistryLoader.NAME);
+    const storageRef = <StorageRef>Injector.get(C_STORAGE_DEFAULT);
+    let permissions = await storageRef.getController().find(Permission, null, {limit: 0}) as Permission[];
+    let rbelongs = await storageRef.getController().find(RBelongsTo, null, {limit: 0}) as RBelongsTo[];
+    expect(rbelongs).to.have.length(5);
+    console.log(rbelongs);
+    const cfgRoles = Config.get('initialise.roles', []);
+    console.log(cfgRoles);
+    await RolesHelper.initRoles(permissionsLoader, cfgRoles);
+    permissions = await storageRef.getController().find(Permission, null, {limit: 0}) as Permission[];
+    rbelongs = await storageRef.getController().find(RBelongsTo, null, {limit: 0}) as RBelongsTo[];
+    console.log(rbelongs);
+    expect(rbelongs).to.have.length(5);
+  }
+
+
+  @test
+  async 'modify existing roles'() {
     bootstrap = Bootstrap
       // .setConfigSources()
       .configure(<ITypexsOptions & any>{

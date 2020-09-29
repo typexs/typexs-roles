@@ -3,6 +3,5 @@
 --recursive
 --timeout 30000
 
-test/**/*.spec.ts
-test/**/**/*.spec.ts
+test/**/*.spec.ts test/**/**/*.spec.ts
 
