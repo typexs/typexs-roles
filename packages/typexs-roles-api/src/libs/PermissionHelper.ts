@@ -66,8 +66,35 @@ export class PermissionHelper {
   }
 
 
-  static async checkPermissions(
+  static checkPermissions(
     permissions: string[] | IPermissionDef[], permissionValues: string[], holder?: IRolesHolder, resource?: ISecuredResource
+  ) {
+    return this.checkPermissionsFn((arr: boolean[]) => {
+      return arr.reduce((previousValue, currentValue) => previousValue && currentValue);
+    }, permissions, permissionValues, holder, resource);
+  }
+
+
+  static checkOnePermission(
+    permissions: string[] | IPermissionDef[], permissionValues: string[], holder?: IRolesHolder, resource?: ISecuredResource
+  ) {
+    return this.checkPermissionsFn((arr: boolean[]) => {
+      return arr.reduce((previousValue, currentValue) => previousValue || currentValue);
+    }, permissions, permissionValues, holder, resource);
+  }
+
+
+  static checkAllPermissions(
+    permissions: string[] | IPermissionDef[], permissionValues: string[], holder?: IRolesHolder, resource?: ISecuredResource
+  ) {
+    return this.checkPermissions(permissions, permissionValues, holder, resource);
+  }
+
+
+  static async checkPermissionsFn(
+    reduce: (x: boolean[]) => boolean,
+    permissions: string[] | IPermissionDef[],
+    permissionValues: string[], holder?: IRolesHolder, resource?: ISecuredResource
   ) {
     let usePermissions: IPermissionDef[] = [];
     if (permissions && permissions.length > 0 && typeof permissions[0] === 'string') {
@@ -108,7 +135,12 @@ export class PermissionHelper {
         }
       }
 
-      allowed = arrAllowed.reduce((previousValue, currentValue) => previousValue && currentValue);
+      // if (mode === 'all') {
+      //   allowed = arrAllowed.reduce((previousValue, currentValue) => previousValue && currentValue);
+      // } else if () {
+      //
+      // }
+      allowed = reduce(arrAllowed);
       if (allowed) {
         break;
       }
