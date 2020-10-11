@@ -1,3 +1,4 @@
+// process.env.SQL_LOG = '1';
 import {expect} from 'chai';
 import {Bootstrap, Injector, ITypexsOptions} from '@typexs/base';
 import {suite, test} from 'mocha-typescript';
