@@ -38,31 +38,33 @@ export class PermissionHelper {
   }
 
   static checkPermission(permissions: string[] | IPermissionDef[], permissionValue: string) {
-    let allowed = false;
-    let usePermissions: IPermissionDef[] = [];
-    if (permissions && permissions.length > 0 && typeof permissions[0] === 'string') {
-      usePermissions = (permissions as string[]).map((x: string) => {
-        return <IPermissionDef>{type: /\*/.test(x) ? 'pattern' : 'single', permission: x};
-      });
-    } else {
-      usePermissions = permissions as IPermissionDef[];
-    }
+    return this.checkPermissions(permissions, [permissionValue]);
 
-    for (const permission of usePermissions) {
-      let matched = false;
-      switch (permission.type || 'single') {
-        case 'pattern':
-          matched = !!this.miniMatch(permission.permission, permissionValue);
-          break;
-        default:
-          matched = (permission.permission === permissionValue);
-      }
-      if (matched) {
-        allowed = matched;
-        break;
-      }
-    }
-    return allowed;
+    // let allowed = false;
+    // let usePermissions: IPermissionDef[] = [];
+    // if (permissions && permissions.length > 0 && typeof permissions[0] === 'string') {
+    //   usePermissions = (permissions as string[]).map((x: string) => {
+    //     return <IPermissionDef>{type: /\*/.test(x) ? 'pattern' : 'single', permission: x};
+    //   });
+    // } else {
+    //   usePermissions = permissions as IPermissionDef[];
+    // }
+    //
+    // for (const permission of usePermissions) {
+    //   let matched = false;
+    //   switch (permission.type || 'single') {
+    //     case 'pattern':
+    //       matched = !!this.miniMatch(permission.permission, permissionValue);
+    //       break;
+    //     default:
+    //       matched = (permission.permission === permissionValue);
+    //   }
+    //   if (matched) {
+    //     allowed = matched;
+    //     break;
+    //   }
+    // }
+    // return allowed;
   }
 
 
@@ -113,6 +115,7 @@ export class PermissionHelper {
           continue;
         }
         const permissionValue = permissionValues[i];
+        const reversePattern = /\*/.test(permissionValue);
 
         let _allowed = false;
         switch (permission.type || 'single') {
@@ -121,6 +124,24 @@ export class PermissionHelper {
             break;
           default:
             _allowed = permissionValue === permission.permission;
+        }
+
+        // reverse check if cross pattern
+        if (!_allowed && reversePattern) {
+          const usePermSplit = permission.permission.split(' ');
+          const checkPermSplit = permissionValue.split(' ');
+          if (usePermSplit.length === checkPermSplit.length) {
+            for (let i = 0; i < usePermSplit.length; i++) {
+              if (usePermSplit[i] === '*' || checkPermSplit[i] === '*') {
+                _allowed = true;
+              } else if (usePermSplit[i] === checkPermSplit[i]) {
+                _allowed = true;
+              } else {
+                _allowed = false;
+                break;
+              }
+            }
+          }
         }
 
         if (_allowed) {
