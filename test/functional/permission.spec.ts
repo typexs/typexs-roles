@@ -44,6 +44,24 @@ class PermissionSpec {
   }
 
   @test()
+  async 'check for one permission with pattern'() {
+    let r = await PermissionHelper.checkOnePermission(['best test', 'news access', 'car open'], ['allow thing']);
+    expect(r).to.be.false;
+    r = await PermissionHelper.checkOnePermission(['best test', 'allow *', 'car open'], ['allow thing']);
+    expect(r).to.be.true;
+    r = await PermissionHelper.checkOnePermission(['best test', '* thing', 'car open'], ['allow thing']);
+    expect(r).to.be.true;
+    r = await PermissionHelper.checkOnePermission(['best test', '* thin', 'car open'], ['allow thing']);
+    expect(r).to.be.false;
+    // r = await PermissionHelper.checkOnePermission(['a', 'b', 'c'], ['a', 'd']);
+    // expect(r).to.be.true;
+    // r = await PermissionHelper.checkOnePermission(['a', 'b', 'c'], ['d']);
+    // expect(r).to.be.false;
+    // r = await PermissionHelper.checkOnePermission(['a', 'b', 'c'], ['d', 'e']);
+    // expect(r).to.be.false;
+  }
+
+  @test()
   async 'check for all permission'() {
     let r = await PermissionHelper.checkAllPermissions(['a', 'b', 'c'], ['a']);
     expect(r).to.be.true;
