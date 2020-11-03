@@ -55,6 +55,8 @@ class PermissionSpec {
     r = await PermissionHelper.checkOnePermission(['best test', '* thin', 'car open'], ['allow thing']);
     expect(r).to.be.false;
     r = await PermissionHelper.checkOnePermission(['best test', '* thing great', 'car open'], ['allow thing *']);
+    expect(r).to.be.true;
+    r = await PermissionHelper.checkOnePermission(['best test', '* thing great', 'car open'], ['allow thinger *']);
     expect(r).to.be.false;
   }
 
