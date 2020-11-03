@@ -60,7 +60,7 @@ export class Access {
       if (!_.isEmpty(roles)) {
         const permissions = this.getPermissions(PermissionHelper.getPermissionNamesFromRoles(roles));
         if (!_.isEmpty(permissions)) {
-          allowed = await PermissionHelper.checkPermissions(permissions, permissionValues, credential, resource);
+          allowed = await PermissionHelper.checkOnePermission(permissions, permissionValues, credential, resource);
         }
       }
     }
