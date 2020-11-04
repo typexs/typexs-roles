@@ -4,7 +4,6 @@ import {Cache, Inject} from '@typexs/base';
 import {PermissionsRegistry} from './PermissionsRegistry';
 
 import {IPermissionDef, IRole, IRolesHolder, ISecuredResource} from '@typexs/roles-api';
-import {MatchUtils} from '@typexs/base/libs/utils/MatchUtils';
 import {PermissionHelper} from '@typexs/roles-api/index';
 
 /**
@@ -21,7 +20,7 @@ export class Access {
   cache: Cache;
 
   // validate(credential: IRolesHolder, permissionValue: string);
-  async validate(credential: IRolesHolder, permissionValue: string | string[] | ISecuredResource) {
+  async validate(credential: IRolesHolder, permissionValue: string | string[] | ISecuredResource, mode: 'one' | 'all' = 'one') {
     if (_.isEmpty(permissionValue)) {
       return false;
     }
@@ -60,7 +59,11 @@ export class Access {
       if (!_.isEmpty(roles)) {
         const permissions = this.getPermissions(PermissionHelper.getPermissionNamesFromRoles(roles));
         if (!_.isEmpty(permissions)) {
-          allowed = await PermissionHelper.checkOnePermission(permissions, permissionValues, credential, resource);
+          if (mode === 'all') {
+            allowed = await PermissionHelper.checkAllPermissions(permissions, permissionValues, credential, resource);
+          } else {
+            allowed = await PermissionHelper.checkOnePermission(permissions, permissionValues, credential, resource);
+          }
         }
       }
     }
