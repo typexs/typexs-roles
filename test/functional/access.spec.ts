@@ -116,9 +116,15 @@ class AccessSpec {
     expect(allowed).to.be.false;
 
     allowed = await access.validate(user, ['have a nice day', 'have a nice next day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice day', 'have a nice next day'], 'all');
     expect(allowed).to.be.false;
 
     allowed = await access.validate(user_2, ['have a nice day', 'have a nice next day']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user_2, ['have a nice day', 'have a nice next day'], 'all');
     expect(allowed).to.be.true;
 
     allowed = await access.validate(user, ['have a nice next day']);
@@ -193,6 +199,9 @@ class AccessSpec {
     expect(allowed).to.be.true;
 
     allowed = await access.validate(user, ['have a nice next day', 'have a nice day', 'nice next day access']);
+    expect(allowed).to.be.true;
+
+    allowed = await access.validate(user, ['have a nice next day', 'have a nice day', 'nice next day access'], 'all');
     expect(allowed).to.be.false;
   }
 
