@@ -44,7 +44,7 @@
     "lodash": "^4.17.0",
     "@cezaryrk/minimatch": "^3.0.4",
     "@typexs/base": "^1.2.33",
-    "@typexs/roles-api": "^1.0.18",
+    "@typexs/roles-api": "^1.0.19",
     "@typexs/schema": "^1.0.15"
   },
   "private": true,
