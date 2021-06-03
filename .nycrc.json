@@ -1,0 +1,22 @@
+{
+  "extension": [
+    ".ts",
+    ".tsx"
+  ],
+  "exclude": [
+    "**/*.d.ts",
+    "tmp/",
+    "build/"
+  ],
+  "require": [
+    "ts-node/register"
+  ],
+  "sourceMap": true,
+  "instrument": true,
+  "cache": false,
+  "reporter": [
+    "html",
+    "json",
+    "text"
+  ]
+}
