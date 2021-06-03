@@ -1,7 +1,7 @@
 // process.env.SQL_LOG = '1';
 import {expect} from 'chai';
 import {Bootstrap, Injector, ITypexsOptions} from '@typexs/base';
-import {suite, test} from 'mocha-typescript';
+import {suite, test} from '@testdeck/mocha';
 import {TEST_STORAGE_OPTIONS} from './config';
 import {Access} from '../../src/libs/Access';
 import {PermissionsRegistry} from '../../src';

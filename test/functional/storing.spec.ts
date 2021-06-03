@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {expect} from 'chai';
 import {Bootstrap, C_STORAGE_DEFAULT, Config, Injector, ITypexsOptions, StorageRef} from '@typexs/base';
-import {suite, test} from 'mocha-typescript';
+import {suite, test} from '@testdeck/mocha';
 import {TEST_STORAGE_OPTIONS} from './config';
 import {Permission, RBelongsTo} from '../../src';
 import {Role} from '../../src/entities/Role';
@@ -11,9 +11,6 @@ import {RolesHelper} from '../../src/libs/RolesHelper';
 
 let bootstrap: Bootstrap;
 
-// let inc = 0;
-
-// @suite(TestHelper.suiteName(__filename))
 @suite('functional/storing')
 class StoringSpec {
 
@@ -27,6 +24,7 @@ class StoringSpec {
       await bootstrap.shutdown();
       Bootstrap.reset();
     }
+    // RegistryFactory.reset();
   }
 
 
@@ -37,7 +35,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/activator'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..'], disableCache: true},
+        modules: {paths: [__dirname + '/../..'], disableCache: true, include: []},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -71,7 +69,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/startup'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..'], disableCache: true},
+        modules: {paths: [__dirname + '/../..'], disableCache: true, include: []},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -103,7 +101,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/init_roles'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..'], disableCache: true},
+        modules: {paths: [__dirname + '/../..'], disableCache: true, include: []},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -144,7 +142,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/init_roles'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..'], disableCache: true},
+        modules: {paths: [__dirname + '/../..'], disableCache: true, include: []},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
@@ -177,7 +175,7 @@ class StoringSpec {
       .configure(<ITypexsOptions & any>{
         app: {path: __dirname + '/demo_storing/init_roles'},
         logging: {enable: true, level: 'debug'},
-        modules: {paths: [__dirname + '/../..'], disableCache: true},
+        modules: {paths: [__dirname + '/../..'], disableCache: true, include: []},
         storage: {default: TEST_STORAGE_OPTIONS},
         // workers: {access: [{name: 'TaskMonitorWorker', access: 'allow'}]}
       });
