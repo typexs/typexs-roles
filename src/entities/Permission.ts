@@ -1,5 +1,5 @@
-import {Asc, Entity, From, Join, Property, To} from '@typexs/schema/browser';
-import {And, Eq, Key, Value} from 'commons-expressions/browser';
+import {Asc, Entity, From, Join, Property, To} from '@typexs/schema';
+import {And, Eq, Key, Value} from '@allgemein/expressions';
 import {RBelongsTo} from './RBelongsTo';
 import {Role} from './Role';
 import {IPermissionDef, IRolesHolder, ISecuredResource} from '@typexs/roles-api';

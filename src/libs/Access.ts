@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {CryptUtils} from 'commons-base';
+import {CryptUtils} from '@allgemein/base';
 import {Cache, Inject} from '@typexs/base';
 import {PermissionsRegistry} from './PermissionsRegistry';
 
